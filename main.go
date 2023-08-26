@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 )
 
@@ -26,6 +27,8 @@ func helloHandler(w http.ResponseWriter, r *http.Request) {
 
 	// レスポンスデータの書き込み
 	w.Write(data)
+
+	log.Printf("Request received: %s", r.URL.Path)
 }
 
 func main() {

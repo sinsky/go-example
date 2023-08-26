@@ -31,3 +31,17 @@ docker build -t <tagName> .
 docker run -p 8080:8080 <tagName>
 # Please access http://localhost:8080
 ```
+
+## Golang のテスト方法
+
+### モジュールごとのテスト
+
+```shell
+go test ./<dir>
+```
+
+### 特定ディレクトリ配下のすべてのモジュールのテスト
+
+```shell
+go test ./...
+```

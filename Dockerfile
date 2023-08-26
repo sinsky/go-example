@@ -5,7 +5,7 @@ ENV CGO_ENABLED=0 \
 
 WORKDIR /app
 
-COPY main.go go.mod ./
+COPY . ./
 
 RUN go build -o easy-server
 

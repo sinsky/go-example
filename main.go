@@ -2,12 +2,12 @@ package main
 
 import (
 	"net/http"
-	echoMessage "sinsky/hello/src"
+	"sinsky/hello/router"
 )
 
 func main() {
 	// ハンドラーの設定
-	http.HandleFunc("/", echoMessage.HandleHello)
+	http.HandleFunc("/", router.HandleHello)
 
 	// サーバーの起動
 	err := http.ListenAndServe(":8080", nil)

@@ -6,9 +6,11 @@ COPY main.go go.mod ./
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o easy-server
 
-FROM scratch
+FROM alpine:latest
 
 COPY --from=builder /app/easy-server /easy-server
+
+USER gouser:gouser
 
 EXPOSE 8080
 

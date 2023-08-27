@@ -8,47 +8,47 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Build Docker image
-      uses: docker/build-push-action@v2
-      with:
-        context: .
-        push: false
+      - name: Build Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: false
 
-    - name: Calculate Docker image size
-      id: calc-size
-      run: |
-        SIZE=$(docker images --format="{{.Size}}" <docker_image_name>)
-        echo "::set-output name=size::$SIZE"
+      - name: Calculate Docker image size
+        id: calc-size
+        run: |
+          SIZE=$(docker images --format="{{.Size}}" <docker_image_name>)
+          echo "::set-output name=size::$SIZE"
 
-    - name: Check if .prev_size file exists
-      run: |
-        if [ ! -f .prev_size ]; then
-          echo "0" > .prev_size
-        fi
-    
-    - name: Calculate size difference
-      id: calc-diff
-      run: |
-        PREV_SIZE=$(cat .prev_size)
-        SIZE=$(steps.calc-size.outputs.size)
-        DIFF=$(expr $SIZE - $PREV_SIZE)
-        echo "::set-output name=diff::$DIFF"
+      - name: Check if .prev_size file exists
+        run: |
+          if [ ! -f .prev_size ]; then
+            echo "0" > .prev_size
+          fi
 
-    - name: Comment on PR
-      uses: actions/github-script@v5
-      with:
-        script: |
-          const diff = process.env.DIFF
-          github.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: `The Docker image size difference is ${diff} bytes.`
-          })
+      - name: Calculate size difference
+        id: calc-diff
+        run: |
+          PREV_SIZE=$(cat .prev_size)
+          SIZE=$(steps.calc-size.outputs.size)
+          DIFF=$(expr $SIZE - $PREV_SIZE)
+          echo "::set-output name=diff::$DIFF"
 
-    - name: Update previous size
-      run: |
-        echo "${{ steps.calc-size.outputs.size }}" > .prev_size
+      - name: Comment on PR
+        uses: actions/github-script@v5
+        with:
+          script: |
+            const diff = process.env.DIFF
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `The Docker image size difference is ${diff} bytes.`
+            })
+
+      - name: Update previous size
+        run: |
+          echo "${{ steps.calc-size.outputs.size }}" > .prev_size

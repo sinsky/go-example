@@ -35,7 +35,37 @@ jobs:
         run: |
           PREV_SIZE=$(cat .prev_size)
           SIZE=${{steps.calc-size.outputs.size}}
-          DIFF=$(expr $SIZE - $PREV_SIZE)
+          input1=$SIZE
+          input2=$PREV_SIZE
+
+          # 入力をサイズ単位と値に分割
+          size1="${input1: -2}"        # サイズ単位（例: MB）
+          value1="${input1%,*}"       # 値（例: 14.2）
+
+          size2="${input2: -2}"        # サイズ単位（例: MB）
+          value2="${input2%,*}"       # 値（例: 10.2）
+
+          # サイズ単位による変換係数を定義
+          case "$size1" in
+              "KB") factor1=1024 ;;
+              "MB") factor1=1048576 ;;
+              "GB") factor1=1073741824 ;;
+              *) echo "Invalid size unit: $size1"; exit 1 ;;
+          esac
+
+          case "$size2" in
+              "KB") factor2=1024 ;;
+              "MB") factor2=1048576 ;;
+              "GB") factor2=1073741824 ;;
+              *) echo "Invalid size unit: $size2"; exit 1 ;;
+          esac
+
+          # サイズをバイト単位に変換して差分を計算
+          bytes1=$(bc <<< "$value1 * $factor1")
+          bytes2=$(bc <<< "$value2 * $factor2")
+          DIFF=$(bc <<< "$bytes1 - $bytes2")
+
+          echo "Difference: ${DIFF} bytes"
           echo "::set-output name=diff::$DIFF"
 
       - name: Comment on PR

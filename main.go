@@ -1,7 +1,7 @@
 package main
 
 import (
-	"hello/router"
+	"hello/module/router"
 	"net/http"
 )
 

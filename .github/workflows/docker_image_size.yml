@@ -20,9 +20,15 @@ jobs:
     - name: Calculate Docker image size
       id: calc-size
       run: |
-        SIZE=$(docker images --format="{{.Size}}" my-image)
+        SIZE=$(docker images --format="{{.Size}}" <docker_image_name>)
         echo "::set-output name=size::$SIZE"
 
+    - name: Check if .prev_size file exists
+      run: |
+        if [ ! -f .prev_size ]; then
+          echo "0" > .prev_size
+        fi
+    
     - name: Calculate size difference
       id: calc-diff
       run: |

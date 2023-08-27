@@ -16,11 +16,12 @@ jobs:
         with:
           context: .
           push: false
+          tags: app:latest
 
       - name: Calculate Docker image size
         id: calc-size
         run: |
-          SIZE=$(docker images --format="{{.Size}}" <docker_image_name>)
+          SIZE=$(docker images --format="{{.Size}}" app:latest)
           echo "::set-output name=size::$SIZE"
 
       - name: Check if .prev_size file exists

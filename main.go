@@ -1,8 +1,8 @@
 package main
 
 import (
+	"hello/router"
 	"net/http"
-	"sinsky/hello/router"
 )
 
 func main() {

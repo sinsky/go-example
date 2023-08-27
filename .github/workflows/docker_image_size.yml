@@ -22,7 +22,7 @@ jobs:
         id: calc-size
         run: |
           SIZE=$(docker images --format="{{.Size}}" app:latest)
-          echo "::set-output name=size::$SIZE"
+          echo "size=$SIZE" >> "$GITHUB_OUTPUT"
 
       - name: Check if .prev_size file exists
         run: |

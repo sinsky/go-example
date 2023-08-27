@@ -34,7 +34,7 @@ jobs:
         id: calc-diff
         run: |
           PREV_SIZE=$(cat .prev_size)
-          SIZE=$(steps.calc-size.outputs.size)
+          SIZE=${{steps.calc-size.outputs.size}}
           DIFF=$(expr $SIZE - $PREV_SIZE)
           echo "::set-output name=diff::$DIFF"
 

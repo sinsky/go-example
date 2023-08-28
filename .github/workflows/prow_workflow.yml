@@ -18,4 +18,3 @@ jobs:
             /approve
             /lgtm
           github-token: "${{ secrets.GITHUB_TOKEN }}"
-          token: ${{ secrets.GITHUB_TOKEN }}

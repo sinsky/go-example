@@ -1,0 +1,21 @@
+name: Handle prow slash commands
+
+on:
+  issue_comment:
+    types: [created]
+
+jobs:
+  prow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Prow Commands
+        uses: kubernetes/test-infra/prow-github-actions@v1
+        with:
+          prow-commands: |
+            /approve
+            /lgtm
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
+          token: ${{ secrets.GITHUB_TOKEN }}

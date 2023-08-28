@@ -44,4 +44,3 @@ go test ./<dir>
 
 ```shell
 go test ./...
-```

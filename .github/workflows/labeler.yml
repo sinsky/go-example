@@ -5,15 +5,3 @@ jobs:
   label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@v4
-        with:
-          repo-token: "${{ secrets.GITHUB_TOKEN }}"
-          configuration-path: ".github/labeler.yml"
-          paths:
-            - 'modules/**'
-            - 'go.mod'
-            - 'main.go'
-            - '.github/workflows/*'
-          labels:
-            - 'code-change'
-            - 'workflow-change'

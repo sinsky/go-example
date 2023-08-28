@@ -36,10 +36,4 @@ jobs:
               body: comment
             })
 
-      - name: Handle prow slash commands
-        uses: jpmcb/prow-github-actions@v1
-        with:
-          prow-commands: |
-            /approve
-            /lgtm
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      

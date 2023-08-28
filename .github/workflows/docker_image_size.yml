@@ -60,7 +60,7 @@ jobs:
         run: |
           PR_NUM=${{ github.event.pull_request.number }}
           COMMENT="The Docker image size difference is ${{ steps.convert-diff.outputs.human_diff }}.\nBefore size: ${{ steps.calc-size.outputs.size }}\nAfter size: ${{ steps.calc-size.outputs.size }}"
-          echo "$COMMENT" | gh pr comment "$PR_NUM" --body-file=-\nDIFFERENCE: ${{ steps.calc-diff.outputs.diff }}
+          echo "$COMMENT" | gh pr comment "$PR_NUM" --body-file=-
 
       - name: Update previous size
         run: |

@@ -62,10 +62,11 @@ jobs:
           COMMENT="| Docker image size difference | Before size | After size |\n| --- | --- | --- |\n| ${{ steps.convert-diff.outputs.human_diff }} | ${{ steps.calc-size.outputs.size }} | ${{ steps.calc-size.outputs.size }}"
       
           echo "$COMMENT" | gh pr comment "$PR_NUM" --body-file=-
-
-      - name: Update previous size
-        run: |
-          echo "${{ steps.calc-size.outputs.size }}" > .prev_size
-          BEFORE_SIZE=$(cat .prev_size)
           COMMENT=$(echo "$COMMENT" | sed "s/Before size/$BEFORE_SIZE/")
-          echo "$COMMENT" | gh pr comment "$PR_NUM" --body-file=-
+
+  - name: Update previous size
+    run: |
+      echo "${{ steps.calc-size.outputs.size }}" > .prev_size
+      BEFORE_SIZE=$(cat .prev_size)
+      COMMENT=$(echo "$COMMENT" | sed "s/Before size/$BEFORE_SIZE/")
+      echo "$COMMENT" | gh pr comment "$PR_NUM" --body-file=-

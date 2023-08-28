@@ -1,8 +1,8 @@
-name: Prow Workflow
+name: Handle prow slash commands
 
 on:
-  pull_request:
-    types: [opened, synchronize, reopened, labeled, unlabeled]
+  issue_comment:
+    types: [created]
 
 jobs:
   prow:
@@ -14,5 +14,8 @@ jobs:
       - name: Run Prow Commands
         uses: kubernetes/test-infra/prow-github-actions@v1
         with:
-          command: 'lgtm,approve'
+          prow-commands: |
+            /approve
+            /lgtm
+          github-token: "${{ secrets.GITHUB_TOKEN }}"
           token: ${{ secrets.GITHUB_TOKEN }}

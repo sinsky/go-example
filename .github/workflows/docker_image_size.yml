@@ -49,11 +49,18 @@ jobs:
           echo "Human-readable difference: ${HUMAN_DIFF}"
           echo "::set-output name=human_diff::$HUMAN_DIFF"
       
-      - name: Install GitHub CLI
-        run: sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key C99B11DEB97541F0 && sudo apt-add-repository https://cli.github.com/packages && sudo apt update && sudo apt install gh
+      
       
       - name: Comment on PR
-        run: gh pr comment ${GITHUB_REF#refs/pull/} --body "The Docker image size difference is ${{ steps.convert-diff.outputs.human_diff }}."
+        uses: actions/github-script@v5
+        with:
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "The Docker image size difference is ${{ steps.convert-diff.outputs.human_diff }}."
+            })
 
       - name: Update previous size
         run: |

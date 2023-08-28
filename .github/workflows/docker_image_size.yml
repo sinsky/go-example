@@ -63,6 +63,7 @@ jobs:
       
           echo "$COMMENT" | gh pr comment "$PR_NUM" --body-file=-
           COMMENT=$(echo "$COMMENT" | sed "s/Before size/$BEFORE_SIZE/")
+          COMMENT=$(echo "$COMMENT" | sed "s/Before size/$BEFORE_SIZE/")
 
   - name: Update previous size
     run: |

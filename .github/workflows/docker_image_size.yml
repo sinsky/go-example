@@ -48,23 +48,21 @@ jobs:
         run: |
           DIFF=${{steps.calc-diff.outputs.diff}}
           HUMAN_DIFF=$(numfmt --to=iec-i --suffix=B --format="%.1f" $DIFF)
-      
+
           echo "Human-readable difference: ${HUMAN_DIFF}"
           echo "::set-output name=human_diff::$HUMAN_DIFF"
-      
-      
-      
+
       - name: Comment on PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_NUM=${{ github.event.pull_request.number }}
           COMMENT="| Docker image size difference | Before size | After size |\n| --- | --- | --- |\n| ${{ steps.convert-diff.outputs.human_diff }} | ${{ steps.calc-size.outputs.size }} | ${{ steps.calc-size.outputs.size }}"
-      
+
           echo "$COMMENT" | gh pr comment "$PR_NUM" --body-file=-
           COMMENT=$(echo "$COMMENT" | sed "s/Before size/$BEFORE_SIZE/")
           COMMENT=$(echo "$COMMENT" | sed "s/Before size/$BEFORE_SIZE/")
 
-  - name: Update previous size
-    run: |
-      echo "${{ steps.calc-size.outputs.size }}" > .prev_size
+      - name: Update previous size
+        run: |
+          echo "${{ steps.calc-size.outputs.size }}" > .prev_size

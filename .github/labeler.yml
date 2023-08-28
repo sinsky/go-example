@@ -13,7 +13,7 @@ test:
 # Add 'source' label to any change to src files within the source dir EXCEPT for the docs sub-folder
 source:
 - any: ['src/**', '!src/docs/*']
-
+  
 # Add 'frontend` label to any change to *.js files as long as the `main.js` hasn't changed
 frontend:
 - any: ['src/**/*.js']
@@ -29,3 +29,13 @@ AnyChange:
 # Add the 'AnyChange' label to any changes within the entire repository if the 'dot' option is set to 'true'
 AnyChange:
 - '**'
+
+# Add the 'code' label when changes are made to ./module/**, main.go, or go.mod
+code:
+- './module/**'
+- main.go
+- go.mod
+
+# Add the 'workflow' label when changes are made to ./github/workflows/**
+workflow:
+- './github/workflows/**'

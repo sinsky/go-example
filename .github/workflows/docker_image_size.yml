@@ -41,7 +41,14 @@ jobs:
           if [ "$SIZE" -eq "$PREV_SIZE" ]; then
             DIFF=0
           else
-            DIFF=$(bc <<< "$SIZE - $PREV_SIZE")
+            if [ "$SIZE" -eq "$PREV_SIZE" ]; then
+              DIFF=0
+            else
+              DIFF=$(bc <<< "$SIZE - $PREV_SIZE")
+              if [ -z "$DIFF" ]; then
+                DIFF=0
+              fi
+            fi
             if [ -z "$DIFF" ]; then
               DIFF=0
             fi

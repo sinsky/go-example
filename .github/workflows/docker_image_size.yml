@@ -38,7 +38,14 @@ jobs:
         run: |
           PREV_SIZE=$(cat .prev_size)
           SIZE=${{steps.calc-size.outputs.size}}
-          DIFF=$(bc <<< "$SIZE - $PREV_SIZE")
+          if [ "$SIZE" -eq "$PREV_SIZE" ]; then
+            DIFF=0
+          else
+            DIFF=$(bc <<< "$SIZE - $PREV_SIZE")
+            if [ -z "$DIFF" ]; then
+              DIFF=0
+            fi
+          fi
 
           echo "Difference: ${DIFF} bytes"
           echo "::set-output name=diff::$DIFF"

@@ -59,7 +59,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_NUM=${{ github.event.pull_request.number }}
-          COMMENT="The Docker image size difference is ${{ steps.convert-diff.outputs.human_diff }}.\nBefore size: ${{ steps.calc-size.outputs.size }}\nAfter size: ${{ steps.calc-size.outputs.size }}"
+          COMMENT="| Docker image size difference | Before size | After size |\n| --- | --- | --- |\n| ${{ steps.convert-diff.outputs.human_diff }} | ${{ steps.calc-size.outputs.size }} | ${{ steps.calc-size.outputs.size }}"
           echo "$COMMENT" | gh pr comment "$PR_NUM" --body-file=-
 
       - name: Update previous size

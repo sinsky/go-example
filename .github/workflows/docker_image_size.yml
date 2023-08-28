@@ -21,7 +21,7 @@ jobs:
       - name: Calculate Docker image size
         id: calc-size
         run: |
-          SIZE=$(docker images --format="{{.Size}}" app:latest)
+          SIZE=$(docker image inspect app:latest --format='{{.Size}}')
           echo "size=$SIZE" >> "$GITHUB_OUTPUT"
 
       - name: Check if .prev_size file exists
@@ -35,49 +35,30 @@ jobs:
         run: |
           PREV_SIZE=$(cat .prev_size)
           SIZE=${{steps.calc-size.outputs.size}}
-          input1=$SIZE
-          input2=$PREV_SIZE
-
-          # 入力をサイズ単位と値に分割
-          size1="${input1: -2}"        # サイズ単位（例: MB）
-          value1="${input1%,*}"       # 値（例: 14.2）
-
-          size2="${input2: -2}"        # サイズ単位（例: MB）
-          value2="${input2%,*}"       # 値（例: 10.2）
-
-          # サイズ単位による変換係数を定義
-          case "$size1" in
-              "KB") factor1=1024 ;;
-              "MB") factor1=1048576 ;;
-              "GB") factor1=1073741824 ;;
-              *) echo "Invalid size unit: $size1"; exit 1 ;;
-          esac
-
-          case "$size2" in
-              "KB") factor2=1024 ;;
-              "MB") factor2=1048576 ;;
-              "GB") factor2=1073741824 ;;
-              *) echo "Invalid size unit: $size2"; exit 1 ;;
-          esac
-
-          # サイズをバイト単位に変換して差分を計算
-          bytes1=$(bc <<< "$value1 * $factor1")
-          bytes2=$(bc <<< "$value2 * $factor2")
-          DIFF=$(bc <<< "$bytes1 - $bytes2")
+          DIFF=$(bc <<< "$SIZE - $PREV_SIZE")
 
           echo "Difference: ${DIFF} bytes"
           echo "::set-output name=diff::$DIFF"
 
+      - name: Convert size difference to human-readable format
+        id: convert-diff
+        run: |
+          DIFF=${{steps.calc-diff.outputs.diff}}
+          HUMAN_DIFF=$(numfmt --to=iec-i --suffix=B --format="%.1f" $DIFF)
+      
+          echo "Human-readable difference: ${HUMAN_DIFF}"
+          echo "::set-output name=human_diff::$HUMAN_DIFF"
+      
       - name: Comment on PR
         uses: actions/github-script@v5
         with:
           script: |
-            const diff = process.env.DIFF
+            const human_diff = process.env.HUMAN_DIFF
             github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: `The Docker image size difference is ${diff} bytes.`
+              body: `The Docker image size difference is ${human_diff}.`
             })
 
       - name: Update previous size

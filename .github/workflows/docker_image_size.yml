@@ -47,7 +47,12 @@ jobs:
         id: convert-diff
         run: |
           DIFF=${{steps.calc-diff.outputs.diff}}
-          HUMAN_DIFF=$(numfmt --to=iec-i --suffix=B --format="%.1f" $DIFF)
+          if (( DIFF < 0 )); then
+            DIFF=$(( -DIFF ))
+            HUMAN_DIFF="-$(numfmt --to=iec-i --suffix=B --format="%.1f" $DIFF)"
+          else
+            HUMAN_DIFF=$(numfmt --to=iec-i --suffix=B --format="%.1f" $DIFF)
+          fi
 
           echo "Human-readable difference: ${HUMAN_DIFF}"
           echo "::set-output name=human_diff::$HUMAN_DIFF"

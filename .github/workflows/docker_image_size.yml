@@ -53,8 +53,11 @@ jobs:
         uses: actions/github-script@v5
         with:
           script: |
+            const core = require('@actions/core');
+            const github = require('@actions/github');
+            const octokit = github.getOctokit(core.getInput('github-token'));
             const human_diff = process.env.HUMAN_DIFF
-            github.issues.createComment({
+            octokit.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,

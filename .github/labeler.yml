@@ -1,0 +1,9 @@
+# Add the 'code' label when changes are made to ./module/**, main.go, or go.mod
+code:
+- './module/**'
+- main.go
+- go.mod
+
+# Add the 'workflow' label when changes are made to ./github/workflows/**
+workflow:
+- './github/workflows/**'

@@ -60,6 +60,9 @@ jobs:
         id: convert-diff
         run: |
           DIFF=${{steps.calc-diff.outputs.diff}}
+          if(($DIFF < 0)); then
+            DIFF=$(( -DIFF ))
+          fi
           HUMAN_DIFF=$(numfmt --to=iec-i --suffix=B --format="%.1f" $DIFF)
 
           echo "Human-readable difference: ${HUMAN_DIFF}"
@@ -70,9 +73,15 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_NUM=${{ github.event.pull_request.number }}
+          SIGN=""
+          if (( ${{steps.calc-diff.outputs.diff}} > 0 )); then
+            SIGN="+"
+          else
+            SIGN="-"
+          fi
           gh pr comment "$PR_NUM" --body "| Docker image size difference | Before size | After size |
           | --- | --- | --- |
-          | ${{ steps.convert-diff.outputs.human_diff }} | ${{ steps.calc-size.outputs.before_size }} | ${{ steps.calc-size.outputs.after_size }} |"
+          | $SIGN${{ steps.convert-diff.outputs.human_diff }} | ${{ steps.calc-size.outputs.before_size }} | ${{ steps.calc-size.outputs.after_size }} |"
 
       - name: Update previous size
         run: |

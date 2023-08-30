@@ -21,9 +21,9 @@ jobs:
           push: false
           tags: app:pull_request
 
-      +     - uses: actions/checkout@v3
-      +       with:
-      +         ref: main
+      - uses: actions/checkout@v3
+        with:
+          ref: main
 
       - name: Build main branch Docker image
         uses: docker/build-push-action@v2
@@ -32,21 +32,11 @@ jobs:
           push: false
           tags: app:main
 
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Build Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: false
-          tags: app:latest
-
       - name: Calculate Docker image size
         id: calc-size
         run: |
           BEFORE_SIZE=$(docker image inspect app:main --format='{{.Size}}')
-          AFTER_SIZE=$(docker image inspect app:latest --format='{{.Size}}')
+          AFTER_SIZE=$(docker image inspect app:pull_request --format='{{.Size}}')
           echo "before_size=$BEFORE_SIZE" >> "$GITHUB_OUTPUT"
           echo "after_size=$AFTER_SIZE" >> "$GITHUB_OUTPUT"
 

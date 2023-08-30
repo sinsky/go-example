@@ -21,8 +21,9 @@ jobs:
           push: false
           tags: app:pull_request
 
-      - name: Switch to main branch
-        run: git checkout main
+      +     - uses: actions/checkout@v3
+      +       with:
+      +         ref: main
 
       - name: Build main branch Docker image
         uses: docker/build-push-action@v2

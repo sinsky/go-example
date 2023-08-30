@@ -61,8 +61,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_NUM=${{ github.event.pull_request.number }}
-          BEFORE_SIZE=$(numfmt --to=iec-i --suffix=B --format="%.1f" ${{ steps.calc-size.outputs.before_size }})
-          AFTER_SIZE=$(numfmt --to=iec-i --suffix=B --format="%.1f" ${{ steps.calc-size.outputs.after_size }})
+          BEFORE_SIZE=$(numfmt --to=iec --suffix=B --format="%.1f" ${{ steps.calc-size.outputs.before_size }})
+          AFTER_SIZE=$(numfmt --to=iec --suffix=B --format="%.1f" ${{ steps.calc-size.outputs.after_size }})
 
           DIFF=${{steps.calc-diff.outputs.diff}}
           SIGN=""
@@ -72,7 +72,7 @@ jobs:
           elif(($DIFF > 0)); then
             SIGN="+"
           fi
-          HUMAN_DIFF=$(numfmt --to=iec-i --suffix=B --format="%.1f" $DIFF)
+          HUMAN_DIFF=$(numfmt --to=iec --suffix=B --format="%.1f" $DIFF)
 
           gh pr comment "$PR_NUM" --body "| Docker image size difference | Before size | After size |
           | --- | --- | --- |

@@ -7,6 +7,10 @@ WORKDIR /app
 
 COPY . ./
 
+RUN go mod download
+
+RUN go vet -v
+
 RUN go build -o easy-server
 
 FROM gcr.io/distroless/static-debian12:nonroot

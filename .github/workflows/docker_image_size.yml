@@ -12,10 +12,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build pull request branch Docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: .
           push: false
@@ -26,7 +26,7 @@ jobs:
           ref: main
 
       - name: Build main branch Docker image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           context: .
           push: false
@@ -54,7 +54,7 @@ jobs:
           DIFF=$(bc <<< "$AFTER_SIZE - $BEFORE_SIZE")
 
           echo "Difference: ${DIFF} bytes"
-          echo "::set-output name=diff::$DIFF"
+          echo "diff=$DIFF" >> "$GITHUB_OUTPUT"
 
       - name: Comment on PR
         env:

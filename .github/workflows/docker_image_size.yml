@@ -14,6 +14,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+      - name: Build pull request branch Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: false
+          tags: app:pull_request
+
       - name: Build main branch Docker image
         uses: docker/build-push-action@v2
         with:
@@ -35,7 +42,7 @@ jobs:
         id: calc-size
         run: |
           BEFORE_SIZE=$(docker image inspect app:main --format='{{.Size}}')
-          AFTER_SIZE=$(docker image inspect app:latest --format='{{.Size}}')
+          AFTER_SIZE=$(docker image inspect app:pull_request --format='{{.Size}}')
           echo "before_size=$BEFORE_SIZE" >> "$GITHUB_OUTPUT"
           echo "after_size=$AFTER_SIZE" >> "$GITHUB_OUTPUT"
 

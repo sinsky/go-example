@@ -9,12 +9,9 @@ COPY . ./
 
 RUN go build -o easy-server
 
-FROM alpine:latest
+FROM gcr.io/distroless/static-debian12:nonroot
 
-RUN addgroup -S gouser && adduser -S gouser -G gouser
-USER gouser:gouser
-
-COPY --from=builder --chown=gouser:gouser /app/easy-server /easy-server
+COPY --from=builder /app/easy-server /easy-server
 
 EXPOSE 8080
 

@@ -14,18 +14,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Build Docker image
+      - name: Build pull request branch Docker image
         uses: docker/build-push-action@v2
         with:
           context: .
           push: false
-          tags: app:latest
+          tags: app:pull_request
+
+      - uses: actions/checkout@v3
+        with:
+          ref: main
+
+      - name: Build main branch Docker image
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: false
+          tags: app:main
 
       - name: Calculate Docker image size
         id: calc-size
         run: |
-          SIZE=$(docker image inspect app:latest --format='{{.Size}}')
-          echo "size=$SIZE" >> "$GITHUB_OUTPUT"
+          BEFORE_SIZE=$(docker image inspect app:main --format='{{.Size}}')
+          AFTER_SIZE=$(docker image inspect app:pull_request --format='{{.Size}}')
+          echo "before_size=$BEFORE_SIZE" >> "$GITHUB_OUTPUT"
+          echo "after_size=$AFTER_SIZE" >> "$GITHUB_OUTPUT"
 
       - name: Check if .prev_size file exists
         run: |
@@ -36,30 +49,34 @@ jobs:
       - name: Calculate size difference
         id: calc-diff
         run: |
-          PREV_SIZE=$(cat .prev_size)
-          SIZE=${{steps.calc-size.outputs.size}}
-          DIFF=$(bc <<< "$SIZE - $PREV_SIZE")
+          BEFORE_SIZE=${{steps.calc-size.outputs.before_size}}
+          AFTER_SIZE=${{steps.calc-size.outputs.after_size}}
+          DIFF=$(bc <<< "$AFTER_SIZE - $BEFORE_SIZE")
 
           echo "Difference: ${DIFF} bytes"
           echo "::set-output name=diff::$DIFF"
-
-      - name: Convert size difference to human-readable format
-        id: convert-diff
-        run: |
-          DIFF=${{steps.calc-diff.outputs.diff}}
-          HUMAN_DIFF=$(numfmt --to=iec-i --suffix=B --format="%.1f" $DIFF)
-
-          echo "Human-readable difference: ${HUMAN_DIFF}"
-          echo "::set-output name=human_diff::$HUMAN_DIFF"
 
       - name: Comment on PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           PR_NUM=${{ github.event.pull_request.number }}
+          BEFORE_SIZE=$(numfmt --to=iec --suffix=B --format="%.1f" ${{ steps.calc-size.outputs.before_size }})
+          AFTER_SIZE=$(numfmt --to=iec --suffix=B --format="%.1f" ${{ steps.calc-size.outputs.after_size }})
+
+          DIFF=${{steps.calc-diff.outputs.diff}}
+          SIGN=""
+          if(($DIFF < 0)); then
+            SIGN="-"
+            DIFF=$(( -DIFF ))
+          elif(($DIFF > 0)); then
+            SIGN="+"
+          fi
+          HUMAN_DIFF=$(numfmt --to=iec --suffix=B --format="%.1f" $DIFF)
+
           gh pr comment "$PR_NUM" --body "| Docker image size difference | Before size | After size |
           | --- | --- | --- |
-          | ${{ steps.convert-diff.outputs.human_diff }} | ${{ steps.calc-size.outputs.size }} | ${{ steps.calc-size.outputs.size }} |"
+          | ${SIGN}${HUMAN_DIFF} | ${BEFORE_SIZE} | ${AFTER_SIZE} |"
 
       - name: Update previous size
         run: |

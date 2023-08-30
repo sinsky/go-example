@@ -54,7 +54,7 @@ jobs:
           DIFF=$(bc <<< "$AFTER_SIZE - $BEFORE_SIZE")
 
           echo "Difference: ${DIFF} bytes"
-          echo "::set-output name=diff::$DIFF"
+          echo "diff=$DIFF" >> "$GITHUB_OUTPUT"
 
       - name: Comment on PR
         env:

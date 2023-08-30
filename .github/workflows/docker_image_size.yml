@@ -81,7 +81,7 @@ jobs:
           fi
           gh pr comment "$PR_NUM" --body "| Docker image size difference | Before size | After size |
           | --- | --- | --- |
-          | $SIGN${{ steps.convert-diff.outputs.human_diff }} | ${{ steps.calc-size.outputs.before_size }} | ${{ steps.calc-size.outputs.after_size }} |"
+          | ${SIGN}${{ steps.convert-diff.outputs.human_diff }} | ${{ steps.calc-size.outputs.before_size }} | ${{ steps.calc-size.outputs.after_size }} |"
 
       - name: Update previous size
         run: |
